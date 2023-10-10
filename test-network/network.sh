@@ -16,7 +16,11 @@ export PATH=${PWD}/../bin:$PATH
 export FABRIC_CFG_PATH=${PWD}/configtx
 export VERBOSE=false
 
-. scripts/utils.sh
+. scripts/utils1.sh
+. scripts/utils2.sh
+. scripts/utils3.sh
+. scripts/utils4.sh
+. scripts/utils5.sh
 
 # Obtain CONTAINER_IDS and remove them
 # TODO Might want to make this optional - could clear other containers
@@ -163,6 +167,36 @@ function createOrgs() {
       fatalln "Failed to generate certificates..."
     fi
 
+    infoln "Creating Org3 Identities"
+
+    set -x
+    cryptogen generate --config=./organizations/cryptogen/crypto-config-org3.yaml --output="organizations"
+    res=$?
+    { set +x; } 2>/dev/null
+    if [ $res -ne 0 ]; then
+      fatalln "Failed to generate certificates..."
+    fi
+
+    infoln "Creating Org4 Identities"
+
+    set -x
+    cryptogen generate --config=./organizations/cryptogen/crypto-config-org4.yaml --output="organizations"
+    res=$?
+    { set +x; } 2>/dev/null
+    if [ $res -ne 0 ]; then
+      fatalln "Failed to generate certificates..."
+    fi
+
+    infoln "Creating Org5 Identities"
+
+    set -x
+    cryptogen generate --config=./organizations/cryptogen/crypto-config-org5.yaml --output="organizations"
+    res=$?
+    { set +x; } 2>/dev/null
+    if [ $res -ne 0 ]; then
+      fatalln "Failed to generate certificates..."
+    fi
+
     infoln "Creating Orderer Org Identities"
 
     set -x
@@ -287,7 +321,7 @@ function networkUp() {
 
 # call the script to create the channel, join the peers of org1 and org2,
 # and then update the anchor peers for each organization
-function createChannel() {
+function createChannel1() {
   # Bring up the network if it is not already up.
 
   if [ ! -d "organizations/peerOrganizations" ]; then
@@ -299,19 +333,112 @@ function createChannel() {
   # more to create the channel creation transaction and the anchor peer updates.
   # configtx.yaml is mounted in the cli container, which allows us to use it to
   # create the channel artifacts
-  scripts/createChannel.sh $CHANNEL_NAME $CLI_DELAY $MAX_RETRY $VERBOSE
+  scripts/createChannel1.sh $CHANNEL_NAME_1 $CLI_DELAY $MAX_RETRY $VERBOSE
+}
+
+function createChannel2() {
+  # Bring up the network if it is not already up.
+
+  if [ ! -d "organizations/peerOrganizations" ]; then
+    infoln "Bringing up network"
+    networkUp
+  fi
+
+  # now run the script that creates a channel. This script uses configtxgen once
+  # more to create the channel creation transaction and the anchor peer updates.
+  # configtx.yaml is mounted in the cli container, which allows us to use it to
+  # create the channel artifacts
+  scripts/createChannel2.sh $CHANNEL_NAME_2 $CLI_DELAY $MAX_RETRY $VERBOSE
+}
+
+function createChannel3() {
+  # Bring up the network if it is not already up.
+
+  if [ ! -d "organizations/peerOrganizations" ]; then
+    infoln "Bringing up network"
+    networkUp
+  fi
+
+  # now run the script that creates a channel. This script uses configtxgen once
+  # more to create the channel creation transaction and the anchor peer updates.
+  # configtx.yaml is mounted in the cli container, which allows us to use it to
+  # create the channel artifacts
+  scripts/createChannel3.sh $CHANNEL_NAME_3 $CLI_DELAY $MAX_RETRY $VERBOSE
+}
+
+function createChannel4() {
+  # Bring up the network if it is not already up.
+
+  if [ ! -d "organizations/peerOrganizations" ]; then
+    infoln "Bringing up network"
+    networkUp
+  fi
+
+  # now run the script that creates a channel. This script uses configtxgen once
+  # more to create the channel creation transaction and the anchor peer updates.
+  # configtx.yaml is mounted in the cli container, which allows us to use it to
+  # create the channel artifacts
+  scripts/createChannel4.sh $CHANNEL_NAME_4 $CLI_DELAY $MAX_RETRY $VERBOSE
+}
+
+function createChannel5() {
+  # Bring up the network if it is not already up.
+
+  if [ ! -d "organizations/peerOrganizations" ]; then
+    infoln "Bringing up network"
+    networkUp
+  fi
+
+  # now run the script that creates a channel. This script uses configtxgen once
+  # more to create the channel creation transaction and the anchor peer updates.
+  # configtx.yaml is mounted in the cli container, which allows us to use it to
+  # create the channel artifacts
+  scripts/createChannel5.sh $CHANNEL_NAME_5 $CLI_DELAY $MAX_RETRY $VERBOSE
 }
 
 
 ## Call the script to deploy a chaincode to the channel
-function deployCC() {
-  scripts/deployCC.sh $CHANNEL_NAME $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
+function deployCC1() {
+  scripts/deployCC1.sh $CHANNEL_NAME_1 $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
 
   if [ $? -ne 0 ]; then
     fatalln "Deploying chaincode failed"
   fi
 }
 
+## Call the script to deploy a chaincode to the channel
+function deployCC2() {
+  scripts/deployCC2.sh $CHANNEL_NAME_2 $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
+
+  if [ $? -ne 0 ]; then
+    fatalln "Deploying chaincode failed"
+  fi
+}
+
+## Call the script to deploy a chaincode to the channel
+function deployCC3() {
+  scripts/deployCC3.sh $CHANNEL_NAME_3 $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
+
+  if [ $? -ne 0 ]; then
+    fatalln "Deploying chaincode failed"
+  fi
+}
+
+function deployCC4() {
+  scripts/deployCC4.sh $CHANNEL_NAME_4 $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
+
+  if [ $? -ne 0 ]; then
+    fatalln "Deploying chaincode failed"
+  fi
+}
+
+function deployCC5() {
+  scripts/deployCC5.sh $CHANNEL_NAME_5 $CC_NAME $CC_SRC_PATH $CC_SRC_LANGUAGE $CC_VERSION $CC_SEQUENCE $CC_INIT_FCN $CC_END_POLICY $CC_COLL_CONFIG $CLI_DELAY $MAX_RETRY $VERBOSE
+
+  if [ $? -ne 0 ]; then
+    fatalln "Deploying chaincode failed"
+  fi
+}
 
 # Tear down running network
 function networkDown() {
@@ -348,7 +475,11 @@ MAX_RETRY=5
 # default for delay between commands
 CLI_DELAY=3
 # channel name defaults to "mychannel"
-CHANNEL_NAME="mychannel"
+CHANNEL_NAME_1="mychannel1"
+CHANNEL_NAME_2="mychannel2"
+CHANNEL_NAME_3="mychannel3"
+CHANNEL_NAME_4="mychannel4"
+CHANNEL_NAME_5="mychannel5"
 # chaincode name defaults to "NA"
 CC_NAME="NA"
 # chaincode path defaults to "NA"
@@ -397,8 +528,26 @@ fi
 # parse a createChannel subcommand if used
 if [[ $# -ge 1 ]] ; then
   key="$1"
-  if [[ "$key" == "createChannel" ]]; then
-      export MODE="createChannel"
+  if [[ "$key" == "createChannel1" ]]; then
+      export MODE="createChannel1"
+      shift
+  fi
+fi
+
+# parse a createChannel subcommand if used
+if [[ $# -ge 1 ]] ; then
+  key="$1"
+  if [[ "$key" == "createChannel2" ]]; then
+      export MODE="createChannel2"
+      shift
+  fi
+fi
+
+# parse a createChannel subcommand if used
+if [[ $# -ge 1 ]] ; then
+  key="$1"
+  if [[ "$key" == "createChannel3" ]]; then
+      export MODE="createChannel3"
       shift
   fi
 fi
@@ -412,8 +561,24 @@ while [[ $# -ge 1 ]] ; do
     printHelp $MODE
     exit 0
     ;;
-  -c )
-    CHANNEL_NAME="$2"
+  -c1 )
+    CHANNEL_NAME_1="$2"
+    shift
+    ;;
+  -c2 )
+    CHANNEL_NAME_2="$2"
+    shift
+    ;;
+  -c3 )
+    CHANNEL_NAME_3="$2"
+    shift
+    ;;
+  -c4 )
+    CHANNEL_NAME_4="$2"
+    shift
+    ;;
+  -c5 )
+    CHANNEL_NAME_5="$2"
     shift
     ;;
   -ca )
@@ -494,15 +659,35 @@ fi
 # Determine mode of operation and printing out what we asked for
 if [ "$MODE" == "up" ]; then
   infoln "Starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE}' ${CRYPTO_MODE}"
-elif [ "$MODE" == "createChannel" ]; then
-  infoln "Creating channel '${CHANNEL_NAME}'."
+elif [ "$MODE" == "createChannel1" ]; then
+  infoln "Creating channel '${CHANNEL_NAME_1}'."
+  infoln "If network is not up, starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE} ${CRYPTO_MODE}"
+elif [ "$MODE" == "createChannel2" ]; then
+  infoln "Creating channel '${CHANNEL_NAME_2}'."
+  infoln "If network is not up, starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE} ${CRYPTO_MODE}"
+elif [ "$MODE" == "createChannel3" ]; then
+  infoln "Creating channel '${CHANNEL_NAME_3}'."
+  infoln "If network is not up, starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE} ${CRYPTO_MODE}"
+elif [ "$MODE" == "createChannel4" ]; then
+  infoln "Creating channel '${CHANNEL_NAME_4}'."
+  infoln "If network is not up, starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE} ${CRYPTO_MODE}"
+elif [ "$MODE" == "createChannel5" ]; then
+  infoln "Creating channel '${CHANNEL_NAME_5}'."
   infoln "If network is not up, starting nodes with CLI timeout of '${MAX_RETRY}' tries and CLI delay of '${CLI_DELAY}' seconds and using database '${DATABASE} ${CRYPTO_MODE}"
 elif [ "$MODE" == "down" ]; then
   infoln "Stopping network"
 elif [ "$MODE" == "restart" ]; then
   infoln "Restarting network"
-elif [ "$MODE" == "deployCC" ]; then
-  infoln "deploying chaincode on channel '${CHANNEL_NAME}'"
+elif [ "$MODE" == "deployCC1" ]; then
+  infoln "deploying chaincode on channel '${CHANNEL_NAME_1}'"
+elif [ "$MODE" == "deployCC2" ]; then
+  infoln "deploying chaincode on channel '${CHANNEL_NAME_2}'"
+elif [ "$MODE" == "deployCC3" ]; then
+  infoln "deploying chaincode on channel '${CHANNEL_NAME_3}'"
+elif [ "$MODE" == "deployCC4" ]; then
+  infoln "deploying chaincode on channel '${CHANNEL_NAME_4}'"
+elif [ "$MODE" == "deployCC5" ]; then
+  infoln "deploying chaincode on channel '${CHANNEL_NAME_5}'"
 else
   printHelp
   exit 1
@@ -510,10 +695,26 @@ fi
 
 if [ "${MODE}" == "up" ]; then
   networkUp
-elif [ "${MODE}" == "createChannel" ]; then
-  createChannel
-elif [ "${MODE}" == "deployCC" ]; then
-  deployCC
+elif [ "${MODE}" == "createChannel1" ]; then
+  createChannel1
+elif [ "${MODE}" == "createChannel2" ]; then
+  createChannel2
+elif [ "${MODE}" == "createChannel3" ]; then
+  createChannel3
+elif [ "${MODE}" == "createChannel4" ]; then
+  createChannel4
+elif [ "${MODE}" == "createChannel5" ]; then
+  createChannel5
+elif [ "${MODE}" == "deployCC1" ]; then
+  deployCC1
+elif [ "${MODE}" == "deployCC2" ]; then
+  deployCC2
+elif [ "${MODE}" == "deployCC3" ]; then
+  deployCC3
+elif [ "${MODE}" == "deployCC4" ]; then
+  deployCC4
+elif [ "${MODE}" == "deployCC5" ]; then
+  deployCC5
 elif [ "${MODE}" == "down" ]; then
   networkDown
 else

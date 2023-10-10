@@ -1,0 +1,2 @@
+[34m2023-09-08 11:13:16.281 PKT [channelCmd] InitCmdFactory -> INFO 001[0m Endorser and orderer connections initialized
+Error: got unexpected status: BAD_REQUEST -- error validating channel creation transaction for new channel 'mychannel2', could not successfully apply update to template configuration: error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 1 of the 'Admins' sub-policies to be satisfied
